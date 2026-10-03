@@ -56,6 +56,14 @@ pipeline {
                         -e MYSQL_ROOT_PASSWORD=root \
                         -e MYSQL_DATABASE=timesheet-devops-db \
                         mysql:8.0
+
+                    echo "Waiting for MySQL..."
+
+                    until docker exec mysql mysqladmin ping -h localhost -uroot -proot --silent; do
+                        sleep 2
+                    done
+
+                    echo "MySQL is ready!"
                 '''
             }
         }
@@ -79,7 +87,10 @@ pipeline {
         stage('Verification') {
             steps {
                 sh '''
+                    echo "=== Docker containers ==="
                     docker ps
+
+                    echo "=== Backend logs ==="
                     docker logs backend-app
                 '''
             }
