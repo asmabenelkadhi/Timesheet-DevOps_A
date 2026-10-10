@@ -26,9 +26,11 @@ pipeline {
             steps {
                 withSonarQubeEnv('SonarQube') {
                     sh '''
-                        mvn -B sonar:sonar \
+                        mvn -B org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
                             -Dsonar.projectKey=monprojet-springboot \
-                            -Dsonar.projectName=MonProjetSpringBoot
+                            -Dsonar.projectName=MonProjetSpringBoot \
+                            -Dsonar.host.url=http://192.168.33.10:9000/ \
+                            -Dsonar.token=$SONAR_TOKEN
                     '''
                 }
             }
