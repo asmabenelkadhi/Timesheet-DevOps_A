@@ -1,3 +1,4 @@
+
 pipeline {
     agent any
 
@@ -9,9 +10,49 @@ pipeline {
             }
         }
 
-        stage('Build & Test Maven') {
+        stage('Build') {
             steps {
-                sh 'mvn clean package'
+                sh 'mvn -B clean compile'
+            }
+        }
+
+        stage('Tests') {
+            steps {
+                sh 'mvn -B test'
+            }
+        }
+
+        stage('SonarQube') {
+            steps {
+                withSonarQubeEnv('SonarQube') {
+                    sh '''
+                        mvn -B sonar:sonar \
+                            -Dsonar.projectKey=monprojet-springboot \
+                            -Dsonar.projectName=MonProjetSpringBoot
+                    '''
+                }
+            }
+        }
+
+        stage('QualityGate') {
+            steps {
+                timeout(time: 5, unit: 'MINUTES') {
+                    script {
+                        def qg = waitForQualityGate()
+
+                        if (qg.status != 'OK') {
+                            error "Quality Gate échoué : ${qg.status}"
+                        }
+
+                        echo 'Quality Gate réussi !'
+                    }
+                }
+            }
+        }
+
+        stage('Package') {
+            steps {
+                sh 'mvn -B -DskipTests package'
             }
         }
 
@@ -31,11 +72,13 @@ pipeline {
                     )
                 ]) {
                     sh '''
+                        set +x
                         echo "$REGISTRY_PASSWORD" | docker login localhost:5000 \
                             -u "$REGISTRY_USER" \
                             --password-stdin
 
-                        docker tag backend-app:latest localhost:5000/backend-app:latest
+                        docker tag backend-app:latest \
+                            localhost:5000/backend-app:latest
 
                         docker push localhost:5000/backend-app:latest
                     '''
@@ -59,9 +102,13 @@ pipeline {
 
                     echo "Waiting for MySQL..."
 
-                    until docker exec mysql mysqladmin ping -h localhost -uroot -proot --silent; do
-                        sleep 2
-                    done
+                    timeout 120 sh -c '
+                        until docker exec mysql \
+                            mysqladmin ping -h localhost \
+                            -uroot -proot --silent; do
+                            sleep 2
+                        done
+                    '
 
                     echo "MySQL is ready!"
                 '''
@@ -91,19 +138,9 @@ pipeline {
                     docker ps
 
                     echo "=== Backend logs ==="
-                    docker logs backend-app
+                    docker logs --tail 100 backend-app
                 '''
             }
         }
-        node {
-          stage('SonarQube ') {
-               steps {
-                 sh '''
-                    withSonarQubeEnv() {
-                        sh "${mvn}/bin/mvn clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=monprojet-springboot -Dsonar.projectName='MonProjetSpringBoot'"
-               '''
-            }
-      }
-}
- }
+    }
 }
