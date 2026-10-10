@@ -95,5 +95,15 @@ pipeline {
                 '''
             }
         }
-    }
+        node {
+          stage('SonarQube ') {
+               steps {
+                 sh '''
+                    withSonarQubeEnv() {
+                        sh "${mvn}/bin/mvn clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=monprojet-springboot -Dsonar.projectName='MonProjetSpringBoot'"
+               '''
+            }
+      }
+}
+ }
 }
