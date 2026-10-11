@@ -22,19 +22,26 @@ pipeline {
             }
         }
 
-        stage('SonarQube') {
-            steps {
-                withSonarQubeEnv('SonarQube') {
-                    sh '''
-                        mvn -B org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
-                            -Dsonar.projectKey=monprojet-springboot \
-                            -Dsonar.projectName=MonProjetSpringBoot \
-                            -Dsonar.host.url=http://192.168.33.10:9000/ \
-                            -Dsonar.token=$SONAR_TOKEN
-                    '''
-                }
-            }
+       
+stage('SonarQube') {
+    steps {
+        withCredentials([
+            string(
+                credentialsId: 'sonarqube-token',
+                variable: 'SONAR_TOKEN'
+            )
+        ]) {
+            sh '''
+                mvn -B org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+                  -Dsonar.projectKey=monprojet-springboot \
+                  -Dsonar.projectName=MonProjetSpringBoot \
+                  -Dsonar.host.url=http://192.168.33.10:9000 \
+                  -Dsonar.token="$SONAR_TOKEN"
+            '''
         }
+    }
+}
+
 
         stage('QualityGate') {
             steps {
