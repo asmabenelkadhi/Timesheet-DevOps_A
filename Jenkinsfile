@@ -24,7 +24,7 @@ pipeline {
         stage('SonarQube') {
             steps {
                 withSonarQubeEnv('SonarQube') {
-                    sh 'mvn -B sonar:sonar'
+                    sh 'mvn -B org.sonarsource.scanner.maven:sonar-maven-plugin:sonar'
                 }
             }
         }
