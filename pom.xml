@@ -24,8 +24,8 @@
 
         <!-- SonarQube -->
         <sonar.host.url>http://192.168.33.10:9000</sonar.host.url>
-        <sonar.projectKey>springboot-project</sonar.projectKey>
-        <sonar.projectName>Spring Boot Project</sonar.projectName>
+        <sonar.projectKey>spring-boot-demo</sonar.projectKey>
+        <sonar.projectName>ProjetSpringBoot</sonar.projectName>
     </properties>
 
     <dependencies>
