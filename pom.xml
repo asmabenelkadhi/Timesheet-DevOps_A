@@ -5,22 +5,19 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <!-- ========== Parent Spring Boot ========== -->
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>2.5.4</version>
-        <relativePath /> <!-- lookup parent from repository -->
+        <relativePath />
     </parent>
 
-    <!-- ========== Identité du projet ========== -->
     <groupId>tn.esprit.spring.services</groupId>
     <artifactId>timesheet-devops</artifactId>
     <version>1.0</version>
     <name>timesheet-devops</name>
     <description>tp-spring-jsf-crud</description>
 
-    <!-- ========== Propriétés ========== -->
     <properties>
         <java.version>1.8</java.version>
         <maven-jar-plugin.version>3.1.1</maven-jar-plugin.version>
@@ -31,7 +28,6 @@
         <sonar.projectName>Spring Boot Project</sonar.projectName>
     </properties>
 
-    <!-- ========== Dépendances ========== -->
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -59,7 +55,6 @@
         </dependency>
     </dependencies>
 
-    <!-- ========== Déploiement vers Nexus ========== -->
     <distributionManagement>
         <repository>
             <id>deploymentRepo</id>
@@ -68,7 +63,6 @@
         </repository>
     </distributionManagement>
 
-    <!-- ========== Build ========== -->
     <build>
         <plugins>
             <plugin>
@@ -82,7 +76,6 @@
                 <version>3.1.0</version>
             </plugin>
 
-            <!-- JaCoCo : couverture de code pour SonarQube -->
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
@@ -94,3 +87,15 @@
                         </goals>
                     </execution>
                     <execution>
+                        <id>report</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
