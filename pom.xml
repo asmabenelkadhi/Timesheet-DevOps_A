@@ -18,6 +18,8 @@
 		<maven-jar-plugin.version>3.1.1</maven-jar-plugin.version>
     	<sonar.projectKey>springboot-project</sonar.projectKey>
     	<sonar.projectName>Spring Boot Project</sonar.projectName>
+		<sonar.host.url>http://192.168.33.10:9000</sonar.host.url>
+		<sonar.projectKey>springboot-project</sonar.projectKey>
 	</properties>
 	<dependencies>
 		<dependency>
