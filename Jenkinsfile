@@ -1,4 +1,3 @@
-
 pipeline {
     agent any
 
@@ -25,20 +24,7 @@ pipeline {
         stage('SonarQube') {
             steps {
                 withSonarQubeEnv('SonarQube') {
-                    withCredentials([
-                        string(
-                            credentialsId: 'jenkins',
-                            variable: 'SONAR_TOKEN'
-                        )
-                    ]) {
-                        sh '''
-                            mvn -B org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
-                              -Dsonar.projectKey=monprojet-springboot \
-                              -Dsonar.projectName=MonProjetSpringBoot \
-                              -Dsonar.host.url=http://192.168.33.10:9000 \
-                              -Dsonar.token="$SONAR_TOKEN"
-                        '''
-                    }
+                    sh 'mvn -B sonar:sonar'
                 }
             }
         }
@@ -46,15 +32,7 @@ pipeline {
         stage('QualityGate') {
             steps {
                 timeout(time: 5, unit: 'MINUTES') {
-                    script {
-                        def qg = waitForQualityGate()
-
-                        if (qg.status != 'OK') {
-                            error "Quality Gate échoué : ${qg.status}"
-                        }
-
-                        echo 'Quality Gate réussi !'
-                    }
+                    waitForQualityGate abortPipeline: true
                 }
             }
         }
